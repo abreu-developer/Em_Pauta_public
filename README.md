@@ -112,9 +112,9 @@ O Cinema em Pauta também funciona como projeto de estudo e portfólio, permitin
 
 ## 📌 Status
 
-**Em desenvolvimento.**
+**Em concluido.**
 
-As funcionalidades serão implementadas gradualmente, conforme a evolução da arquitetura e das necessidades da aplicação.
+
 
 ## 👨‍💻 Autor
 
