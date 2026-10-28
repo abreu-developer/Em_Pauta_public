@@ -1,0 +1,14 @@
+Flask
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-Login
+Flask-WTF
+Flask-Bcrypt
+Flask-Mail
+psycopg2-binary
+python-dotenv
+Pillow
+requests
+email-validator
+pytest
+pytest-flask

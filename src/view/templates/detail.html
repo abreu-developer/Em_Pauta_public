@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101112">
+  <title>{{ movie.get('name', 'Filme') }} — CinePauta</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">◉</span> CINE<span>PAUTA</span></a>
+    <nav class="main-nav" aria-label="Navegação principal"><a href="{{ url_for('index') }}">Início</a><a class="active" href="{{ url_for('index') }}#filmes">Filmes</a><a href="{{ url_for('index') }}#sobre">Sobre</a></nav>
+    <a class="header-back" href="{{ url_for('index') }}">← Todos os filmes</a>
+  </header>
+
+  <main class="detail-page section-wrap" id="movie-detail" data-movie-id="{{ movie['_id'] }}">
+    <div class="detail-top">
+      <div class="detail-poster-wrap">
+        {% if movie.get('poster_url') %}<img class="detail-poster" src="{{ movie['poster_url'] }}" alt="Pôster de {{ movie.get('name', 'filme') }}">
+        {% else %}<div class="poster-placeholder detail-poster"><span>◉</span><small>CINEPAUTA</small></div>{% endif %}
+      </div>
+      <section class="detail-main">
+        <span class="eyebrow">DETALHES DO FILME</span>
+        <h1 id="movie-title">{{ movie.get('name', 'Filme sem título') }}</h1>
+        <div class="detail-meta">
+          {% if movie.get('score') is not none %}<span class="score"><span aria-hidden="true">★</span> {{ movie['score'] }}{% if movie.get('score_scale') %}/{{ movie['score_scale'] }}{% endif %}</span>{% endif %}
+          {% if movie.get('release_date') %}<span>◷ {{ movie['release_date'] }}</span>{% endif %}
+          {% if movie.get('genre') %}<span>{{ movie['genre'] }}</span>{% endif %}
+          {% if movie.get('duration') %}<span>{{ movie['duration'] }} min</span>{% endif %}
+        </div>
+        {% if movie.get('review') %}<p class="movie-review" id="movie-review">{{ movie['review'] }}</p>{% else %}<p class="movie-review muted" id="movie-review">Ainda não há uma crítica para este filme.</p>{% endif %}
+        {% if movie.get('trailer_url') %}<a class="button button-primary" href="{{ movie['trailer_url'] }}" target="_blank" rel="noopener noreferrer">▶ Assistir trailer</a>{% endif %}
+      </section>
+      <aside class="live-panel" aria-label="Atualizações em tempo real">
+        <div class="live-panel-heading"><h2>Em tempo real</h2><span class="connection-status" id="socket-status"><i></i> Conectando...</span></div>
+        <p class="live-description">Atualizações do filme aparecerão aqui quando o servidor enviar eventos.</p>
+        <ul class="live-feed" id="live-feed" aria-live="polite"><li class="feed-empty">Aguardando atualizações…</li></ul>
+      </aside>
+    </div>
+
+    <section class="details-table">
+      <h2>Informações</h2>
+      <dl>
+        <div><dt>Diretor</dt><dd>{{ movie.get('director', 'Não informado') }}</dd></div>
+        <div><dt>Elenco</dt><dd>{{ movie.get('cast', movie.get('actors', 'Não informado')) }}</dd></div>
+        <div><dt>Gênero</dt><dd>{{ movie.get('genre', 'Não informado') }}</dd></div>
+        <div><dt>Lançamento</dt><dd>{{ movie.get('release_date', 'Não informado') }}</dd></div>
+        <div><dt>Duração</dt><dd>{% if movie.get('duration') %}{{ movie['duration'] }} minutos{% else %}Não informado{% endif %}</dd></div>
+        <div><dt>Avaliação</dt><dd>{% if movie.get('score') is not none %}{{ movie['score'] }}{% else %}Não avaliado{% endif %}</dd></div>
+      </dl>
+    </section>
+
+    {% if movie.get('comments') %}
+    <section class="comments-section"><h2>Comentários <span class="comment-count">{{ movie['comments']|length }}</span></h2><div class="comments-list" id="comments-list">
+      {% for comment in movie['comments'] %}<article class="comment-card"><div class="comment-avatar">{{ (comment.get('author', 'A')|string)[:1]|upper }}</div><div><h3>{{ comment.get('author', 'Anônimo') }}</h3><p>{{ comment.get('text', comment.get('comment', '')) }}</p></div></article>{% endfor %}
+    </div></section>
+    {% endif %}
+
+    {% if movie.get('gallery') %}<section class="gallery-section"><h2>Galeria</h2><div class="gallery-grid">{% for image_url in movie['gallery'] %}<a href="{{ image_url }}" target="_blank" rel="noopener noreferrer"><img src="{{ image_url }}" alt="Imagem da galeria de {{ movie.get('name', 'filme') }}" loading="lazy"></a>{% endfor %}</div></section>{% endif %}
+  </main>
+
+  <footer class="site-footer"><a class="brand brand-footer" href="{{ url_for('index') }}"><span class="brand-mark">◉</span> CINE<span>PAUTA</span></a><p>© {{ current_year|default(2026) }} CinePauta. Todos os direitos reservados.</p><a href="{{ url_for('index') }}" class="back-top">← Voltar ao catálogo</a></footer>
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" crossorigin="anonymous"></script>
+  <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+</body>
+</html>

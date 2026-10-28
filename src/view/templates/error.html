@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101112">
+  <title>{{ error_code|default(500) }} — CinePauta</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="error-body">
+  <header class="site-header">
+    <a class="brand" href="{{ url_for('index') }}"><span class="brand-mark">◉</span> CINE<span>PAUTA</span></a>
+    <nav class="main-nav" aria-label="Navegação principal"><a href="{{ url_for('index') }}">Início</a><a href="{{ url_for('index') }}#filmes">Filmes</a><a href="{{ url_for('index') }}#sobre">Sobre</a></nav>
+  </header>
+  <main class="error-page">
+    <div class="error-illustration" aria-hidden="true"><div class="error-reel">✺</div><span class="error-number">{{ error_code|default(500) }}</span><span class="error-spark spark-one">✦</span><span class="error-spark spark-two">✦</span></div>
+    <span class="eyebrow">OPS! ALGO SAIU DO ROTEIRO</span>
+    <h1>{{ error_title|default('Erro interno do servidor') }}</h1>
+    <p>{{ error_message|default('Ocorreu um problema inesperado. Nossa equipe já foi notificada e está trabalhando para resolver.') }}</p>
+    <div class="error-actions"><a class="button button-primary" href="{{ url_for('index') }}">⌂ Voltar para o início</a><button class="button button-secondary" type="button" id="retry-button">↻ Tentar novamente</button></div>
+    {% if request_id is defined and request_id %}<p class="request-id">Código de referência: {{ request_id }}</p>{% endif %}
+  </main>
+  <footer class="site-footer"><a class="brand brand-footer" href="{{ url_for('index') }}"><span class="brand-mark">◉</span> CINE<span>PAUTA</span></a><p>© {{ current_year|default(2026) }} CinePauta. Todos os direitos reservados.</p></footer>
+  <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+</body>
+</html>

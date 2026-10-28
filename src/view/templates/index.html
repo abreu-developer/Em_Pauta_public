@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101112">
+  <title>CinePauta — Filmes</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="{{ url_for('index') }}" aria-label="CinePauta início"><span class="brand-mark">◉</span> CINE<span>PAUTA</span></a>
+    <nav class="main-nav" aria-label="Navegação principal">
+      <a class="active" href="{{ url_for('index') }}">Início</a>
+      <a href="#filmes">Filmes</a>
+      <a href="#sobre">Sobre</a>
+    </nav>
+    <form class="search-form" action="{{ url_for('index') }}" method="get" role="search">
+      <input name="q" type="search" placeholder="Buscar filmes..." value="{{ search_query|default('') }}" aria-label="Buscar filmes">
+      <button type="submit" aria-label="Buscar">⌕</button>
+    </form>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow">SEU PRÓXIMO FILME FAVORITO</span>
+        <h1>Grandes histórias,<br>em um <span>só lugar.</span></h1>
+        <p>Descubra filmes incríveis, explore nossas recomendações e encontre seu próximo favorito.</p>
+        <a class="button button-primary" href="#filmes">Explorar filmes <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="hero-art" aria-hidden="true"><div class="film-reel">✺</div><div class="hero-glow"></div></div>
+    </section>
+
+    <section class="catalog section-wrap" id="filmes">
+      <div class="section-heading">
+        <div><span class="eyebrow">CATÁLOGO</span><h2>Filmes disponíveis</h2></div>
+        <p class="muted">{% if total is defined %}{{ total }}{% else %}{{ movies|length }}{% endif %} títulos no catálogo</p>
+      </div>
+
+      {% if movies %}
+      <div class="movie-grid" id="movie-grid">
+        {% for movie in movies %}
+        <article class="movie-card">
+          <a class="poster-link" href="{{ url_for('movie_detail', movie_id=movie['_id']) }}" aria-label="Ver detalhes de {{ movie.get('name', 'filme') }}">
+            {% if movie.get('poster_url') %}
+              <img class="movie-poster" src="{{ movie['poster_url'] }}" alt="Pôster de {{ movie.get('name', 'filme') }}" loading="lazy">
+            {% else %}
+              <div class="poster-placeholder"><span>◉</span><small>CINEPAUTA</small></div>
+            {% endif %}
+          </a>
+          <div class="movie-card-content">
+            <h3>{{ movie.get('name', 'Filme sem título') }}</h3>
+            <p class="movie-meta">{{ movie.get('release_date', 'Ano não informado') }}{% if movie.get('genre') %} · {{ movie['genre'] }}{% endif %}</p>
+            <a class="button button-small" href="{{ url_for('movie_detail', movie_id=movie['_id']) }}">Ver detalhes</a>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+
+      {% if pages is defined and pages > 1 %}
+      <nav class="pagination" aria-label="Paginação">
+        {% if page > 1 %}<a class="page-arrow" href="{{ url_for('index', page=page-1, q=search_query|default('')) }}" aria-label="Página anterior">‹</a>{% endif %}
+        {% for page_number in range(1, pages + 1) %}
+          <a class="page-number {% if page_number == page %}current{% endif %}" href="{{ url_for('index', page=page_number, q=search_query|default('')) }}" {% if page_number == page %}aria-current="page"{% endif %}>{{ page_number }}</a>
+        {% endfor %}
+        {% if page < pages %}<a class="page-arrow" href="{{ url_for('index', page=page+1, q=search_query|default('')) }}" aria-label="Próxima página">›</a>{% endif %}
+      </nav>
+      {% endif %}
+      {% else %}
+      <div class="empty-state"><span class="empty-icon">⌕</span><h3>Nenhum filme encontrado</h3><p>Tente outra busca ou volte mais tarde.</p><a class="button button-primary" href="{{ url_for('index') }}">Limpar busca</a></div>
+      {% endif %}
+    </section>
+  </main>
+
+  <footer class="site-footer" id="sobre"><a class="brand brand-footer" href="{{ url_for('index') }}"><span class="brand-mark">◉</span> CINE<span>PAUTA</span></a><p>© {{ current_year|default(2026) }} CinePauta. Todos os direitos reservados.</p><a href="#top" class="back-top">Voltar ao topo ↑</a></footer>
+  <script src="{{ url_for('static', filename='js/script.js') }}" defer></script>
+</body>
+</html>
